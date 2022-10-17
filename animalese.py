@@ -17,7 +17,7 @@ class Animalese:
                  sentence: str = 'Hello, World!',
                  speed: Union[float, int] = 2.5,
                  bebebese: str = 'bebebese_slow',
-                 swear_words: list = ['fuck', 'shit'],
+                 swear_words: tuple = ('fuck', 'shit'),
                  speak: bool = True) -> None:
         self.sentence = sentence
         self.speed = speed
@@ -37,15 +37,15 @@ class Animalese:
             start = self.sentence.index('(')
             end = self.sentence.index(')')
             self.sentence = self.sentence[:start] + '*' * (
-                end - start) + self.sentence[end + 1:]
+                    end - start) + self.sentence[end + 1:]
 
         digraphs = ['ch', 'sh', 'ph', 'th', 'wh']
         i = 0
 
-        while (i < len(self.sentence)):
+        while i < len(self.sentence):
             char = None
             if (i < len(self.sentence) - 1) and (
-                (self.sentence[i] + self.sentence[i + 1]) in digraphs):
+                    (self.sentence[i] + self.sentence[i + 1]) in digraphs):
                 char = self.sentence[i] + self.sentence[i + 1]
                 i += 1
             elif self.sentence[i] in string.ascii_lowercase + string.digits:
@@ -54,24 +54,24 @@ class Animalese:
                 char = self.bebebese
             i += 1
 
-            if char != None and char not in string.digits:
+            if not char and char not in string.digits:
                 new_segment = AudioSegment.from_wav(f'letters/{char}.wav')
                 sentence_wav += new_segment
         return sentence_wav
 
     def change_playback_speed(self, sound: AudioSegment) -> AudioSegment:
-        sound_with_altered_frame_rate = sound._spawn(
+        sound_with_altered_frame_rate = sound._spawn(  # noqa pylint: disable=protected-access
             sound.raw_data,
             overrides={'frame_rate': int(sound.frame_rate * self.speed)})
         return sound_with_altered_frame_rate.set_frame_rate(sound.frame_rate)
 
     def to_sound(
-        self,
-        export: bool = False,
-        export_to: Optional[str] = None
+            self,
+            export: bool = False,
+            export_to: Optional[str] = None
     ) -> Tuple[AudioSegment, Optional[Path]]:
         sound = self.build_sentence()
-        sound_with_altered_frame_rate = sound._spawn(
+        sound_with_altered_frame_rate = sound._spawn(  # noqa pylint: disable=protected-access
             sound.raw_data,
             overrides={'frame_rate': int(sound.frame_rate * self.speed)})
         sound = sound_with_altered_frame_rate.set_frame_rate(sound.frame_rate)

@@ -28,7 +28,6 @@ bot = commands.Bot(command_prefix='!',
 def keyboard_interrupt_handler(sig: int, _) -> None:
     print(f'\nKeyboardInterrupt (id: {sig}) has been caught...')
     print('Terminating the session gracefully...')
-    db.con.close()
     sys.exit(1)
 
 
@@ -48,7 +47,7 @@ async def speak(ctx: Context, *, message: Optional[str] = None) -> None:
         speed = 3.5
     else:
         speed = 2.5
-    ac = Animalese(sentence=message, speed=speed, speak=False, verbose=True)
+    ac = Animalese(sentence=message, speed=speed, speak=False)
     _, file_path = ac.to_sound(export=True, export_to='/tmp')
     file = discord.File(file_path)
     await ctx.send(file=file)
